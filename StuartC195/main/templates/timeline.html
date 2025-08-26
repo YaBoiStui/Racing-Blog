@@ -1,0 +1,39 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+<header>
+    <h1>My Racing Blog</h1>
+    <nav>
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'timeline' %}">Timeline</a>
+        <a href="{% url 'contact' %}">Contact</a>
+        {% if user.is_authenticated %}
+            <span>Hello, {{ user.username }}!</span>
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}">Register</a>
+        {% endif %}
+    </nav>
+</header>
+<div class="container">
+<h2>Race Timeline</h2>
+
+<ul>
+  {% for race in races %}
+    <li>
+      <strong>{{ race.date }} - {{ race.race_name }}</strong> | Position: {{ race.position }} | Car: {{ race.car_used }}
+      <ul>
+        {% for comment in race.comments.all %}
+          <li>{{ comment.user.username }}: {{ comment.comment_text }}</li>
+        {% empty %}
+          <li>No comments yet.</li>
+        {% endfor %}
+      </ul>
+      {% if user.is_authenticated %}
+        <a href="{% url 'add_comment' race.id %}">Add Comment</a>
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+</div>
